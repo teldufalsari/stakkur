@@ -1,0 +1,27 @@
+#include <cstdio>
+
+char ok(char code)
+{
+    if (code == SUCCESS)
+        return 1;
+
+    decrypt(code);
+    return 0;
+}
+
+void decrypt(char code)
+{
+    switch (code) {
+        case ST_FULL: {
+            fprintf(stderr, "Error 201: unable to push stack is full.\n");
+            break;
+        }
+        case ST_EMPTY: {
+            fprintf(stderr, "Error 203: nothing to pop: stack is empty.\n");
+            break;
+        }
+        default: {
+            fprintf(stderr, "Unknown error\n");
+        }
+    }
+}
