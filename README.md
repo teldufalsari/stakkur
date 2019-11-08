@@ -1,2 +1,2 @@
-# stakkur
-Just a stack data type for further processor development
+# Stakkur
+ Just a stack data type for further processor development

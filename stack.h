@@ -9,18 +9,28 @@ template <typename ElemT>
 class Stack
 {
 private:
-    int canary1;
     size_t size_;
     ElemT *data_;
     int hash1, hash2;
     size_t capacity_;
-    int canary2;
+
+
+
+    int  (Stack::*Hashes_[7]) ();
+
+    int (Stack<ElemT>::*NewHash1) ();
+    int (Stack<ElemT>::*NewHash2) ();
 
     int GetHash1();
-
     int GetHash2();
+    int GetHash3();
+    int GetHash4();
+    int GetHash5();
+    int GetHash6();
+    int GetHash7();
 
-    void CanaryInit();
+    void SetHash();
+    void InitHashes();
 
 public:
 

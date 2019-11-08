@@ -1,3 +1,5 @@
+#include "stack.h"
+
 template<typename ElemT>
 Stack<ElemT>::Stack()
 {
@@ -5,6 +7,19 @@ Stack<ElemT>::Stack()
     data_ = nullptr;
     capacity_ = 0;
     hash1 = hash2 = 0;
+
+    Hashes_[0] = &Stack::GetHash1;
+    Hashes_[1] = &Stack::GetHash1;
+    Hashes_[2] = &Stack::GetHash1;
+    Hashes_[3] = &Stack::GetHash1;
+    Hashes_[4] = &Stack::GetHash1;
+    Hashes_[5] = &Stack::GetHash1;
+    Hashes_[6] = &Stack::GetHash1;
+
+    NewHash2 = NewHash1 = nullptr;
+
+    SetHash();
+
 }
 
 template <typename ElemT>
@@ -16,6 +31,22 @@ Stack<ElemT>::Stack(size_t Capacity)
 
     if (data_ == nullptr)
         assert(ok(ST_NULLPTR));
+
+
+    Hashes_[0] = &Stack::GetHash1;
+    Hashes_[1] = &Stack::GetHash2;
+    Hashes_[2] = &Stack::GetHash3;
+    Hashes_[3] = &Stack::GetHash4;
+    Hashes_[4] = &Stack::GetHash5;
+    Hashes_[5] = &Stack::GetHash6;
+    Hashes_[6] = &Stack::GetHash7;
+
+    NewHash2 = NewHash1 = nullptr;
+
+    SetHash();
+
+    hash1 = (this->*NewHash1)();
+    hash2 = (this->*NewHash2)();
 }
 
 template <typename ElemT>
@@ -31,6 +62,20 @@ Stack<ElemT>::Stack(const Stack& Origin)
     void* state = memcpy(data_, Origin.data_, sizeof(ElemT) * capacity_);
     if (data_ == nullptr)
         assert(ok(ST_NULLPTR));
+
+    Hashes_ = (int (**) () ) calloc(7, sizeof(void**));
+
+    if (Hashes_ == nullptr)
+        assert(ok(ST_NULLPTR));
+
+    InitHashes();
+
+    NewHash2 = NewHash1 = nullptr;
+
+    SetHash();
+
+    hash1 = (this->*NewHash1)();
+    hash2 = (this->*NewHash2)();
 }
 
 template<typename ElemT>
@@ -40,6 +85,8 @@ Stack<ElemT>::~Stack()
     data_ = nullptr;
     size_ = 0;
     capacity_ = 0;
+    hash1 =  hash2 = 0;
+    NewHash2 = NewHash2 = nullptr;
 }
 
 template<typename ElemT>
@@ -50,10 +97,18 @@ void Stack<ElemT>::Resize(size_t NewSize)
 
     if (data_ == nullptr)
         assert(ok(ST_NULLPTR));
+
+    SetHash();
+
+    hash1 = (this->*NewHash1)();
+    hash2 = (this->*NewHash2)();
 }
 
 template<typename ElemT>
-char Stack<ElemT>::Push(ElemT value) {
+char Stack<ElemT>::Push(ElemT value)
+{
+    Check();
+
     if (size_ >= capacity_)
         return ST_FULL;
 
@@ -64,6 +119,8 @@ char Stack<ElemT>::Push(ElemT value) {
 template<typename ElemT>
 char Stack<ElemT>::Pop()
 {
+    Check();
+
     if (size_ == 0)
         return ST_EMPTY;
 
@@ -72,7 +129,10 @@ char Stack<ElemT>::Pop()
 }
 
 template<typename ElemT>
-char Stack<ElemT>::Top(ElemT *target) {
+char Stack<ElemT>::Top(ElemT *target)
+{
+    Check();
+
     if (size_ == 0)
         return ST_EMPTY;
 
@@ -83,6 +143,7 @@ char Stack<ElemT>::Top(ElemT *target) {
 template<typename ElemT>
 size_t Stack<ElemT>::Size()
 {
+    Check();
     return size_;
 }
 
@@ -113,20 +174,106 @@ int Stack<ElemT>::GetHash2()
 }
 
 template<typename ElemT>
-void Stack<ElemT>::CanaryInit()
+int Stack<ElemT>::GetHash3()
 {
-   
+    int hash = 0;
+
+    for (size_t i = 0; i < capacity_; i++)
+    {
+        hash += data_[i];
+    }
+
+    return hash % 101;
+}
+
+template<typename ElemT>
+int Stack<ElemT>::GetHash4()
+{
+    int hash = 0;
+
+    for (size_t i = 0; i < capacity_; i++)
+    {
+        hash += data_[i];
+        hash %= 97;
+    }
+
+    return hash;
+}
+
+template<typename ElemT>
+int Stack<ElemT>::GetHash5()
+{
+    int hash = 0;
+
+    for (size_t i = 0; i < capacity_; i++)
+    {
+        hash += data_[i];
+        hash %= 29;
+    }
+
+    return hash;
+}
+
+template<typename ElemT>
+int Stack<ElemT>::GetHash6()
+{
+    int hash = 1;
+
+    for (size_t i = 0; i < capacity_; i++)
+    {
+        hash *= -1 + data_[i];
+    }
+
+    return hash % 113;
+}
+
+template<typename ElemT>
+int Stack<ElemT>::GetHash7()
+{
+    int hash = 1;
+
+    for (size_t i = 0; i < capacity_; i++)
+    {
+        hash *= 2 + data_[i];
+    }
+
+    return hash % 71;
 }
 
 template <typename ElemT>
 char Stack<ElemT>::Check()
 {
-    if (hash1 != GetHash1())
+    if (hash1 != (this->*NewHash1) () )
         return ST_CORRUPTION;
 
-    if (hash2 != GetHash2())
+    if (hash2 != (this->*NewHash2) () )
         return ST_CORRUPTION;
 
-
+    SetHash();
     return SUCCESS;
+}
+
+template<typename ElemT>
+void Stack<ElemT>::SetHash()
+{
+    srand(time(CLOCK_REALTIME));
+
+    NewHash1 =  *(Hashes_ + (rand() % 7));
+
+    do {
+        NewHash2 = *(Hashes_ + (rand() % 7));
+    } while (NewHash2 == NewHash1);
+
+}
+
+template<typename ElemT>
+void Stack<ElemT>::InitHashes()
+{
+    Hashes_[0] = &Stack::GetHash1;
+    Hashes_[1] = &Stack::GetHash1;
+    Hashes_[2] = &Stack::GetHash1;
+    Hashes_[3] = &Stack::GetHash1;
+    Hashes_[4] = &Stack::GetHash1;
+    Hashes_[5] = &Stack::GetHash1;
+    Hashes_[6] = &Stack::GetHash1;
 }

@@ -20,6 +20,14 @@ void decrypt(char code)
             fprintf(stderr, "Error 203: nothing to pop: stack is empty.\n");
             break;
         }
+        case ST_NULLPTR: {
+            fprintf(stderr, "Error 204: invalid memory address.\n");
+            break;
+        }
+        case ST_CORRUPTION: {
+            fprintf(stderr, "Error 205: stack data has been corrupted.\n");
+            break;
+        }
         default: {
             fprintf(stderr, "Unknown error\n");
         }
