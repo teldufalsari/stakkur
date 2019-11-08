@@ -9,4 +9,7 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 _deps
-Stakkur.imlmisc.xmlmodules.xmlworkspace.xml
+Stakkur.iml
+misc.xml
+modules.xml
+workspace.xml

@@ -1,7 +1,9 @@
 #ifndef STACKHDR
 #define STACKHDR
-#include "stack_err.h"
+#include <ctime>
 #include <cstring>
+#include <cstdlib>
+#include "stack_err.h"
 
 template <typename ElemT>
 class Stack
@@ -14,12 +16,23 @@ private:
     size_t capacity_;
     int canary2;
 
-public: Stack ();
+    int GetHash1();
+
+    int GetHash2();
+
+    void CanaryInit();
+
+public:
+
+    Stack ();
+
     explicit Stack(size_t Capacity);
 
     Stack(const Stack&);
 
     ~Stack();
+
+    void Resize(size_t NewSize);
 
     char Push (ElemT value);
 
@@ -28,6 +41,8 @@ public: Stack ();
     char Top (ElemT *target);
 
     size_t Size();
+
+    char Check();
 };
 
 #include "stack.cpp"
