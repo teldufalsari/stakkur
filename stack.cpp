@@ -8,16 +8,17 @@ Stack<ElemT>::Stack()
     capacity_ = 0;
     hash1 = hash2 = 0;
 
-    Hashes_[0] = &Stack::GetHash1;
-    Hashes_[1] = &Stack::GetHash1;
-    Hashes_[2] = &Stack::GetHash1;
-    Hashes_[3] = &Stack::GetHash1;
-    Hashes_[4] = &Stack::GetHash1;
-    Hashes_[5] = &Stack::GetHash1;
-    Hashes_[6] = &Stack::GetHash1;
+
+    sample_ = (void*) new StCanSample<ElemT>[1];
+
+    auto *sample_t = (StCanSample<ElemT>*) sample_;
+
+    canary1_ = sample_t->canary_1_;
+    canary2_ = sample_t->canary_2_;
+
+    InitHashes();
 
     NewHash2 = NewHash1 = nullptr;
-
     SetHash();
 
 }
@@ -33,13 +34,14 @@ Stack<ElemT>::Stack(size_t Capacity)
         assert(ok(ST_NULLPTR));
 
 
-    Hashes_[0] = &Stack::GetHash1;
-    Hashes_[1] = &Stack::GetHash2;
-    Hashes_[2] = &Stack::GetHash3;
-    Hashes_[3] = &Stack::GetHash4;
-    Hashes_[4] = &Stack::GetHash5;
-    Hashes_[5] = &Stack::GetHash6;
-    Hashes_[6] = &Stack::GetHash7;
+    sample_ = (void*) new StCanSample<ElemT>[1];
+
+    auto *sample_t = (StCanSample<ElemT>*) sample_;
+
+    canary1_ = sample_t->canary_1_;
+    canary2_ = sample_t->canary_2_;
+
+    InitHashes();
 
     NewHash2 = NewHash1 = nullptr;
 
@@ -62,6 +64,14 @@ Stack<ElemT>::Stack(const Stack& Origin)
     void* state = memcpy(data_, Origin.data_, sizeof(ElemT) * capacity_);
     if (data_ == nullptr)
         assert(ok(ST_NULLPTR));
+
+
+    sample_ = (void*) new StCanSample<ElemT>[1];
+
+    auto *sample_t = (StCanSample<ElemT>*) sample_;
+
+    canary1_ = sample_t->canary_1_;
+    canary2_ = sample_t->canary_2_;
 
     Hashes_ = (int (**) () ) calloc(7, sizeof(void**));
 
@@ -87,6 +97,7 @@ Stack<ElemT>::~Stack()
     capacity_ = 0;
     hash1 =  hash2 = 0;
     NewHash2 = NewHash2 = nullptr;
+    canary1_ = canary2_ = 0;
 }
 
 template<typename ElemT>
@@ -243,21 +254,30 @@ int Stack<ElemT>::GetHash7()
 template <typename ElemT>
 char Stack<ElemT>::Check()
 {
+    auto *sample_t = (StCanSample<ElemT>*) sample_;
+
     if (hash1 != (this->*NewHash1) () )
         return ST_CORRUPTION;
 
     if (hash2 != (this->*NewHash2) () )
         return ST_CORRUPTION;
 
+    if (canary1_ != sample_t->canary_1_)
+        return ST_CORRUPTION;
+
+    if(canary2_ != sample_t->canary_2_)
+        return ST_CORRUPTION;
+
     SetHash();
+
+    sample_t->Reset();
+
     return SUCCESS;
 }
 
 template<typename ElemT>
 void Stack<ElemT>::SetHash()
 {
-    srand(time(CLOCK_REALTIME));
-
     NewHash1 =  *(Hashes_ + (rand() % 7));
 
     do {
@@ -270,10 +290,25 @@ template<typename ElemT>
 void Stack<ElemT>::InitHashes()
 {
     Hashes_[0] = &Stack::GetHash1;
-    Hashes_[1] = &Stack::GetHash1;
-    Hashes_[2] = &Stack::GetHash1;
-    Hashes_[3] = &Stack::GetHash1;
-    Hashes_[4] = &Stack::GetHash1;
-    Hashes_[5] = &Stack::GetHash1;
-    Hashes_[6] = &Stack::GetHash1;
+    Hashes_[1] = &Stack::GetHash2;
+    Hashes_[2] = &Stack::GetHash3;
+    Hashes_[3] = &Stack::GetHash4;
+    Hashes_[4] = &Stack::GetHash5;
+    Hashes_[5] = &Stack::GetHash6;
+    Hashes_[6] = &Stack::GetHash7;
+}
+
+template<typename ElemT>
+StCanSample<ElemT>::StCanSample()
+{
+    srand(time(CLOCK_REALTIME));
+    canary_1_ = rand();
+    canary_2_ = rand();
+}
+
+template<typename ElemT>
+void StCanSample<ElemT>::Reset()
+{
+    canary_1_ = rand();
+    canary_2_ = rand();
 }

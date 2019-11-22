@@ -12,12 +12,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8e0c4bb1-00a0-4c87-bfbe-1a503d0dfe03" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/Stakkur.cbp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Stakkur.cbp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/Stakkur.exe" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Stakkur.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/stack.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/stack.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/stack.h" beforeDir="false" afterPath="$PROJECT_DIR$/stack.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stack_err.h" beforeDir="false" afterPath="$PROJECT_DIR$/stack_err.h" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -72,6 +73,12 @@
       <workItem from="1572621296927" duration="6898000" />
       <workItem from="1572694523764" duration="283000" />
       <workItem from="1573204188938" duration="4566000" />
+      <workItem from="1573645227951" duration="1442000" />
+      <workItem from="1573658805367" duration="2359000" />
+      <workItem from="1573675820976" duration="947000" />
+      <workItem from="1573753935779" duration="1453000" />
+      <workItem from="1574243503991" duration="67000" />
+      <workItem from="1574442468042" duration="2869000" />
     </task>
     <servers />
   </component>
@@ -83,10 +90,23 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/main.cpp</url>
+          <line>13</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
