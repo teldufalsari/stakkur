@@ -6,6 +6,9 @@
 #include <cassert>
 #include "stack_err.h"
 
+const unsigned long MaximalStCap = ULONG_MAX;
+const unsigned long DefaultStCap = 256;
+
 template <typename ElemT>
 class Stack
 {
@@ -44,7 +47,7 @@ public:
 
     ~Stack();
 
-    void Resize(size_t NewSize);
+    char Resize(size_t extension);
 
     char Push (ElemT value);
 
@@ -68,6 +71,7 @@ private:
     StCanSample();
 
     friend Stack <ElemT>;
+
 public:
     ~StCanSample() = delete;
 };

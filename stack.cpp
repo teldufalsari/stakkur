@@ -4,22 +4,24 @@ template<typename ElemT>
 Stack<ElemT>::Stack()
 {
     size_ = 0;
-    data_ = nullptr;
-    capacity_ = 0;
-    hash1 = hash2 = 0;
+    capacity_ = DefaultStCap;
 
+    data_ = (ElemT*) calloc(capacity_, sizeof(ElemT));
+    if (data_ == nullptr)
+        assert(ok(ST_NULLPTR));
 
     sample_ = (void*) new StCanSample<ElemT>[1];
-
     auto *sample_t = (StCanSample<ElemT>*) sample_;
 
     canary1_ = sample_t->canary_1_;
     canary2_ = sample_t->canary_2_;
 
     InitHashes();
-
     NewHash2 = NewHash1 = nullptr;
+
     SetHash();
+    hash1 = (this->*NewHash1)();
+    hash2 = (this->*NewHash2)();
 
 }
 
@@ -28,25 +30,21 @@ Stack<ElemT>::Stack(size_t Capacity)
 {
     capacity_ = Capacity;
     size_ = 0;
-    data_ = (ElemT*) calloc(capacity_, sizeof(ElemT));
 
+    data_ = (ElemT*) calloc(capacity_, sizeof(ElemT));
     if (data_ == nullptr)
         assert(ok(ST_NULLPTR));
 
-
     sample_ = (void*) new StCanSample<ElemT>[1];
-
     auto *sample_t = (StCanSample<ElemT>*) sample_;
 
     canary1_ = sample_t->canary_1_;
     canary2_ = sample_t->canary_2_;
 
     InitHashes();
-
     NewHash2 = NewHash1 = nullptr;
 
     SetHash();
-
     hash1 = (this->*NewHash1)();
     hash2 = (this->*NewHash2)();
 }
@@ -61,29 +59,25 @@ Stack<ElemT>::Stack(const Stack& Origin)
     if (data_ == nullptr)
         assert(ok(ST_NULLPTR));
 
-    void* state = memcpy(data_, Origin.data_, sizeof(ElemT) * capacity_);
+    memcpy(data_, Origin.data_, sizeof(ElemT) * capacity_);
     if (data_ == nullptr)
         assert(ok(ST_NULLPTR));
 
 
     sample_ = (void*) new StCanSample<ElemT>[1];
-
     auto *sample_t = (StCanSample<ElemT>*) sample_;
 
     canary1_ = sample_t->canary_1_;
     canary2_ = sample_t->canary_2_;
 
     Hashes_ = (int (**) () ) calloc(7, sizeof(void**));
-
     if (Hashes_ == nullptr)
         assert(ok(ST_NULLPTR));
 
     InitHashes();
-
     NewHash2 = NewHash1 = nullptr;
 
     SetHash();
-
     hash1 = (this->*NewHash1)();
     hash2 = (this->*NewHash2)();
 }
@@ -101,9 +95,12 @@ Stack<ElemT>::~Stack()
 }
 
 template<typename ElemT>
-void Stack<ElemT>::Resize(size_t NewSize)
+char Stack<ElemT>::Resize(size_t extension)
 {
-    capacity_ += NewSize;
+    if ((capacity_ + extension) > MaximalStCap)
+        return ST_FULL;
+
+    capacity_ += extension;
     realloc(data_, sizeof(ElemT) * capacity_);
 
     if (data_ == nullptr)
@@ -113,6 +110,8 @@ void Stack<ElemT>::Resize(size_t NewSize)
 
     hash1 = (this->*NewHash1)();
     hash2 = (this->*NewHash2)();
+
+    return SUCCESS;
 }
 
 template<typename ElemT>
@@ -121,7 +120,9 @@ char Stack<ElemT>::Push(ElemT value)
     Check();
 
     if (size_ >= capacity_)
-        return ST_FULL;
+        if(Resize(DefaultStCap) == ST_FULL)
+            return ST_FULL;
+
 
     data_[size_++] = value;
     return SUCCESS;

@@ -13,8 +13,6 @@
   <component name="ChangeListManager">
     <list default="true" id="8e0c4bb1-00a0-4c87-bfbe-1a503d0dfe03" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/Stakkur.cbp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Stakkur.cbp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/Stakkur.exe" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Stakkur.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/stack.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/stack.cpp" afterDir="false" />
@@ -78,7 +76,7 @@
       <workItem from="1573675820976" duration="947000" />
       <workItem from="1573753935779" duration="1453000" />
       <workItem from="1574243503991" duration="67000" />
-      <workItem from="1574442468042" duration="2869000" />
+      <workItem from="1574442468042" duration="4663000" />
     </task>
     <servers />
   </component>
@@ -102,9 +100,9 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/main.cpp</url>
-          <line>13</line>
-          <option name="timeStamp" value="2" />
+          <url>file://$PROJECT_DIR$/stack.cpp</url>
+          <line>97</line>
+          <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

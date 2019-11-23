@@ -31,7 +31,7 @@ int main () {
     state = Stakkur.Pop();
     assert(ok(state));
 
-    Stack<int> Sc(2048);
+    Stack<int> Sc;
 
     forever
     {
