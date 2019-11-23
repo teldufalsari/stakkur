@@ -47,7 +47,7 @@ public:
 
     ~Stack();
 
-    char Resize(size_t extension);
+    void Resize(size_t extension);
 
     char Push (ElemT value);
 

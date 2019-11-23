@@ -7,11 +7,11 @@
 
 int main () {
 
-    float c = 0;
+    //float c = 0;
     char state = 0;
     int ch = 0;
 
-    Stack<float> Stakkur(10) ;
+    /*Stack<float> Stakkur(10) ;
 
     state = Stakkur.Push(3.6);
     assert(ok(state));
@@ -29,7 +29,7 @@ int main () {
     assert(ok(state));
     printf("%g\n", c);
     state = Stakkur.Pop();
-    assert(ok(state));
+    assert(ok(state));*/
 
     Stack<int> Sc;
 

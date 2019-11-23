@@ -1,8 +1,13 @@
 #include "stack.h"
 
+template <typename ElemT>
+StCanSample<ElemT> Samples;
+
 template<typename ElemT>
 Stack<ElemT>::Stack()
 {
+    srand(time(CLOCK_REALTIME));
+
     size_ = 0;
     capacity_ = DefaultStCap;
 
@@ -10,8 +15,9 @@ Stack<ElemT>::Stack()
     if (data_ == nullptr)
         assert(ok(ST_NULLPTR));
 
-    sample_ = (void*) new StCanSample<ElemT>[1];
-    auto *sample_t = (StCanSample<ElemT>*) sample_;
+    auto *sample_t = (StCanSample<ElemT>*) calloc(1, sizeof(StCanSample<ElemT>));
+    sample_t->Reset();
+    sample_ =  sample_t;
 
     canary1_ = sample_t->canary_1_;
     canary2_ = sample_t->canary_2_;
@@ -117,7 +123,7 @@ char Stack<ElemT>::Resize(size_t extension)
 template<typename ElemT>
 char Stack<ElemT>::Push(ElemT value)
 {
-    Check();
+    assert(ok(Check()));
 
     if (size_ >= capacity_)
         if(Resize(DefaultStCap) == ST_FULL)
@@ -125,25 +131,31 @@ char Stack<ElemT>::Push(ElemT value)
 
 
     data_[size_++] = value;
+
+    this->Reset();
+
     return SUCCESS;
 }
 
 template<typename ElemT>
 char Stack<ElemT>::Pop()
 {
-    Check();
+    assert(ok(Check()));
 
     if (size_ == 0)
         return ST_EMPTY;
 
     size_--;
+
+    this->Reset();
+
     return SUCCESS;
 }
 
 template<typename ElemT>
 char Stack<ElemT>::Top(ElemT *target)
 {
-    Check();
+    assert(ok(Check()));
 
     if (size_ == 0)
         return ST_EMPTY;
@@ -155,7 +167,7 @@ char Stack<ElemT>::Top(ElemT *target)
 template<typename ElemT>
 size_t Stack<ElemT>::Size()
 {
-    Check();
+    assert(ok(Check()));
     return size_;
 }
 
@@ -269,10 +281,6 @@ char Stack<ElemT>::Check()
     if(canary2_ != sample_t->canary_2_)
         return ST_CORRUPTION;
 
-    SetHash();
-
-    sample_t->Reset();
-
     return SUCCESS;
 }
 
@@ -312,4 +320,20 @@ void StCanSample<ElemT>::Reset()
 {
     canary_1_ = rand();
     canary_2_ = rand();
+}
+
+template <typename ElemT>
+void Stack<ElemT>::Reset()
+{
+    auto *sample_t = (StCanSample<ElemT>*) sample_;
+
+    SetHash();
+
+    hash1 = (this->*NewHash1)();
+    hash2 = (this->*NewHash2)();
+
+    sample_t->Reset();
+
+    canary1_ = sample_t->canary_1_;
+    canary2_ = sample_t->canary_2_;
 }
