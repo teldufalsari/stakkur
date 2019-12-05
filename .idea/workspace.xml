@@ -12,9 +12,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8e0c4bb1-00a0-4c87-bfbe-1a503d0dfe03" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Container.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Container.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/Stakkur.exe" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Stakkur.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/stack.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/stack.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/stack.h" beforeDir="false" afterPath="$PROJECT_DIR$/stack.h" afterDir="false" />
     </list>
@@ -36,6 +37,7 @@
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="settings.editor.selected.configurable" value="CPPToolchains" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -78,6 +80,11 @@
       <workItem from="1573753935779" duration="1453000" />
       <workItem from="1574243503991" duration="67000" />
       <workItem from="1574442468042" duration="10766000" />
+      <workItem from="1574540626779" duration="226000" />
+      <workItem from="1574540867874" duration="404000" />
+      <workItem from="1574699511525" duration="26000" />
+      <workItem from="1575393788600" duration="153000" />
+      <workItem from="1575572248061" duration="1705000" />
     </task>
     <servers />
   </component>
@@ -96,16 +103,5 @@
         </entry>
       </map>
     </option>
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/stack.cpp</url>
-          <line>103</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

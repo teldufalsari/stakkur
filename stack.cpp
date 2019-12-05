@@ -1,8 +1,5 @@
 #include "stack.h"
 
-template <typename ElemT>
-StCanSample<ElemT> Samples;
-
 template<typename ElemT>
 Stack<ElemT>::Stack()
 {
@@ -15,19 +12,15 @@ Stack<ElemT>::Stack()
     if (data_ == nullptr)
         assert(ok(ST_NULLPTR));
 
-    auto *sample_t = (StCanSample<ElemT>*) calloc(1, sizeof(StCanSample<ElemT>));
-    sample_t->Reset();
-    sample_ =  sample_t;
-
-    canary1_ = sample_t->canary_1_;
-    canary2_ = sample_t->canary_2_;
-
     InitHashes();
-    NewHash2 = NewHash1 = nullptr;
+    NewHash2_ = NewHash1_ = nullptr;
 
     SetHash();
-    hash1 = (this->*NewHash1)();
-    hash2 = (this->*NewHash2)();
+    hash1_ = (this->*NewHash1_)();
+    hash2_ = (this->*NewHash2_)();
+
+    canary1_ = cage_.GetK1();
+    canary2_ = cage_.GetK2();
 
 }
 
@@ -41,18 +34,15 @@ Stack<ElemT>::Stack(size_t Capacity)
     if (data_ == nullptr)
         assert(ok(ST_NULLPTR));
 
-    sample_ = (void*) new StCanSample<ElemT>[1];
-    auto *sample_t = (StCanSample<ElemT>*) sample_;
-
-    canary1_ = sample_t->canary_1_;
-    canary2_ = sample_t->canary_2_;
-
     InitHashes();
-    NewHash2 = NewHash1 = nullptr;
+    NewHash2_ = NewHash1_ = nullptr;
 
     SetHash();
-    hash1 = (this->*NewHash1)();
-    hash2 = (this->*NewHash2)();
+    hash1_ = (this->*NewHash1_)();
+    hash2_ = (this->*NewHash2_)();
+
+    canary1_ = cage_.GetK1();
+    canary2_ = cage_.GetK2();
 }
 
 template <typename ElemT>
@@ -68,24 +58,20 @@ Stack<ElemT>::Stack(const Stack& Origin)
     memcpy(data_, Origin.data_, sizeof(ElemT) * capacity_);
     if (data_ == nullptr)
         assert(ok(ST_NULLPTR));
-
-
-    sample_ = (void*) new StCanSample<ElemT>[1];
-    auto *sample_t = (StCanSample<ElemT>*) sample_;
-
-    canary1_ = sample_t->canary_1_;
-    canary2_ = sample_t->canary_2_;
-
+    
     Hashes_ = (int (**) () ) calloc(7, sizeof(void**));
     if (Hashes_ == nullptr)
         assert(ok(ST_NULLPTR));
 
     InitHashes();
-    NewHash2 = NewHash1 = nullptr;
+    NewHash2_ = NewHash1_ = nullptr;
 
     SetHash();
-    hash1 = (this->*NewHash1)();
-    hash2 = (this->*NewHash2)();
+    hash1_ = (this->*NewHash1_)();
+    hash2_ = (this->*NewHash2_)();
+
+    canary1_ = cage_.GetK1();
+    canary2_ = cage_.GetK2();
 }
 
 template<typename ElemT>
@@ -95,14 +81,16 @@ Stack<ElemT>::~Stack()
     data_ = nullptr;
     size_ = 0;
     capacity_ = 0;
-    hash1 =  hash2 = 0;
-    NewHash2 = NewHash2 = nullptr;
+    hash1_ = hash2_ = 0;
+    NewHash2_ = NewHash2_ = nullptr;
     canary1_ = canary2_ = 0;
 }
 
 template<typename ElemT>
 char Stack<ElemT>::Resize(size_t extension)
 {
+    assert(ok(Check()));
+
     if ((capacity_ + extension) > MaximalStCap)
         return ST_FULL;
 
@@ -112,10 +100,7 @@ char Stack<ElemT>::Resize(size_t extension)
     if (data_ == nullptr)
         assert(ok(ST_NULLPTR));
 
-    SetHash();
-
-    hash1 = (this->*NewHash1)();
-    hash2 = (this->*NewHash2)();
+    this->Reset();
 
     return SUCCESS;
 }
@@ -161,6 +146,9 @@ char Stack<ElemT>::Top(ElemT *target)
         return ST_EMPTY;
 
     *target = data_[size_ - 1];
+
+    this->Reset();
+
     return SUCCESS;
 }
 
@@ -267,18 +255,16 @@ int Stack<ElemT>::GetHash7()
 template <typename ElemT>
 char Stack<ElemT>::Check()
 {
-    auto *sample_t = (StCanSample<ElemT>*) sample_;
-
-    if (hash1 != (this->*NewHash1) () )
+    if (hash1_ != (this->*NewHash1_) () )
         return ST_CORRUPTION;
 
-    if (hash2 != (this->*NewHash2) () )
+    if (hash2_ != (this->*NewHash2_) () )
         return ST_CORRUPTION;
 
-    if (canary1_ != sample_t->canary_1_)
+    if (canary1_ != cage_.GetK1())
         return ST_CORRUPTION;
 
-    if(canary2_ != sample_t->canary_2_)
+    if (canary2_ != cage_.GetK2())
         return ST_CORRUPTION;
 
     return SUCCESS;
@@ -287,11 +273,11 @@ char Stack<ElemT>::Check()
 template<typename ElemT>
 void Stack<ElemT>::SetHash()
 {
-    NewHash1 =  *(Hashes_ + (rand() % 7));
+    NewHash1_ =  *(Hashes_ + (rand() % 7));
 
     do {
-        NewHash2 = *(Hashes_ + (rand() % 7));
-    } while (NewHash2 == NewHash1);
+        NewHash2_ = *(Hashes_ + (rand() % 7));
+    } while (NewHash2_ == NewHash1_);
 
 }
 
@@ -307,33 +293,18 @@ void Stack<ElemT>::InitHashes()
     Hashes_[6] = &Stack::GetHash7;
 }
 
-template<typename ElemT>
-StCanSample<ElemT>::StCanSample()
-{
-    srand(time(CLOCK_REALTIME));
-    canary_1_ = rand();
-    canary_2_ = rand();
-}
-
-template<typename ElemT>
-void StCanSample<ElemT>::Reset()
-{
-    canary_1_ = rand();
-    canary_2_ = rand();
-}
-
 template <typename ElemT>
 void Stack<ElemT>::Reset()
 {
-    auto *sample_t = (StCanSample<ElemT>*) sample_;
 
     SetHash();
 
-    hash1 = (this->*NewHash1)();
-    hash2 = (this->*NewHash2)();
+    hash1_ = (this->*NewHash1_)();
+    hash2_ = (this->*NewHash2_)();
 
-    sample_t->Reset();
+    cage_.ResetKeys();
 
-    canary1_ = sample_t->canary_1_;
-    canary2_ = sample_t->canary_2_;
+    canary1_ = cage_.GetK1();
+    canary2_ = cage_.GetK2();
+
 }

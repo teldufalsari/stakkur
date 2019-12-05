@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <cassert>
 #include "stack_err.h"
+#include "Container.h"
 
 const unsigned long MaximalStCap = ULONG_MAX;
 const unsigned long DefaultStCap = 256;
@@ -17,14 +18,14 @@ private:
 
     size_t size_;
     ElemT *data_;
-    int hash1, hash2;
+    int hash1_, hash2_;
     size_t capacity_;
-    void *sample_;
-    int (Stack::*Hashes_[7]) ();
-    int (Stack<ElemT>::*NewHash1) ();
-    int (Stack<ElemT>::*NewHash2) ();
 
-    int canary2_;
+    Container cage_;
+
+    int (Stack::*Hashes_[7]) ();
+    int (Stack<ElemT>::*NewHash1_) ();
+    int (Stack<ElemT>::*NewHash2_) ();
 
     int GetHash1();
     int GetHash2();
@@ -36,6 +37,9 @@ private:
 
     void SetHash();
     void InitHashes();
+    void Reset();
+
+    int canary2_;
 
 public:
 
@@ -47,7 +51,7 @@ public:
 
     ~Stack();
 
-    void Resize(size_t extension);
+    char Resize(size_t extension);
 
     char Push (ElemT value);
 
@@ -60,21 +64,6 @@ public:
     char Check();
 };
 
-template <typename ElemT>
-class StCanSample
-{
-private:
-
-    int canary_1_;
-    int canary_2_;
-    void Reset();
-    StCanSample();
-
-    friend Stack <ElemT>;
-
-public:
-    ~StCanSample() = delete;
-};
 
 #include "stack.cpp"
 #endif
